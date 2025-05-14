@@ -48,7 +48,7 @@ responses:
 
 paths:
   # ------------------- User Management Service -----------------------------
-  /users/api-docs/{extra_path}:
+  /users/api-docss/{extra_path}:
     get:
       operationId: "users_api_docs_extra_get"
       parameters:

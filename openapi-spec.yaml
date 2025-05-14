@@ -1,0 +1,1634 @@
+swagger: "2.0"
+info:
+  version: "1.0"
+  title: "LOLO Legacy Backend API Gateway"
+
+schemes:
+  - https
+
+securityDefinitions:
+  IDP_JWT_AUTH:
+    type: "oauth2"
+    flow: "implicit"
+    authorizationUrl: "https://accounts.google.com/o/oauth2/auth"
+    x-google-issuer: "https://securetoken.google.com/lolo-app-staging-1"
+    x-google-jwks_uri: "https://www.googleapis.com/service_accounts/v1/metadata/x509/securetoken@system.gserviceaccount.com"
+    x-google-audiences: "lolo-app-staging-1"
+
+  BLOCKING_FUNCTION_TOKEN_AUTH:
+    type: "oauth2"
+    flow: "implicit"
+    authorizationUrl: "https://accounts.google.com/o/oauth2/auth"
+    x-google-issuer: "https://accounts.google.com"
+    x-google-jwks_uri: "https://www.googleapis.com/oauth2/v1/certs"
+    x-google-audiences: "before-user-create-function"
+
+  DOCUMENT_VALIDATOR_FUNCTION_TOKEN_AUTH:
+    type: "oauth2"
+    flow: "implicit"
+    authorizationUrl: "https://accounts.google.com/o/oauth2/auth"
+    x-google-issuer: "https://accounts.google.com"
+    x-google-jwks_uri: "https://www.googleapis.com/oauth2/v1/certs"
+    x-google-audiences: "document-validator-cloud-function"
+
+  # token auth that could be used in all the endpoints to test in postman
+  GCLOUD_TOKEN_AUTH:
+    type: "oauth2"
+    flow: "implicit"
+    authorizationUrl: "https://accounts.google.com/o/oauth2/auth"
+    x-google-issuer: "https://accounts.google.com"
+    x-google-jwks_uri: "https://www.googleapis.com/oauth2/v1/certs"
+    x-google-audiences: "32555940559.apps.googleusercontent.com"
+
+responses:
+  Success:
+    description: "Operation Completed successfully"
+    schema:
+      type: "object"
+
+paths:
+  # ------------------- User Management Service -----------------------------
+  /users/api-docs/{extra_path}:
+    get:
+      operationId: "users_api_docs_extra_get"
+      parameters:
+        - name: "extra_path"
+          in: "path"
+          required: true
+          type: "string"
+      responses:
+        200:
+          $ref: "#/responses/Success"
+      security: []
+      x-google-backend:
+        address: "https://user-management-service-dev-931474023414.us-central1.run.app"
+        path_translation: APPEND_PATH_TO_ADDRESS
+
+  /users/api-docs:
+    get:
+      operationId: "users_api_docs_get"
+      responses:
+        200:
+          $ref: "#/responses/Success"
+      security: []
+      x-google-backend:
+        address: "https://user-management-service-dev-931474023414.us-central1.run.app"
+        path_translation: APPEND_PATH_TO_ADDRESS
+
+  /api/v1/users/{user_id}:
+    get:
+      operationId: "UserController_get"
+      parameters:
+        - name: "user_id"
+          in: "path"
+          required: true
+          type: "string"
+      responses:
+        200:
+          $ref: "#/responses/Success"
+      security:
+        - IDP_JWT_AUTH: []
+        - GCLOUD_TOKEN_AUTH: []
+      x-google-backend:
+        address: "https://user-management-service-dev-931474023414.us-central1.run.app"
+        path_translation: APPEND_PATH_TO_ADDRESS
+    put:
+      operationId: "UserController_update"
+      parameters:
+        - name: "user_id"
+          in: "path"
+          required: true
+          type: "string"
+      responses:
+        200:
+          $ref: "#/responses/Success"
+      security:
+        - IDP_JWT_AUTH: []
+        - GCLOUD_TOKEN_AUTH: []
+      x-google-backend:
+        address: "https://user-management-service-dev-931474023414.us-central1.run.app"
+        path_translation: APPEND_PATH_TO_ADDRESS
+    delete:
+      operationId: "UserController_delete"
+      parameters:
+        - name: "user_id"
+          in: "path"
+          required: true
+          type: "string"
+      responses:
+        200:
+          $ref: "#/responses/Success"
+      security:
+        - IDP_JWT_AUTH: []
+        - GCLOUD_TOKEN_AUTH: []
+      x-google-backend:
+        address: "https://user-management-service-dev-931474023414.us-central1.run.app"
+        path_translation: APPEND_PATH_TO_ADDRESS
+
+  /api/v1/users:
+    post:
+      operationId: "UserController_register"
+      responses:
+        201:
+          $ref: "#/responses/Success"
+      security:
+        - BLOCKING_FUNCTION_TOKEN_AUTH: []
+        - GCLOUD_TOKEN_AUTH: []
+      x-google-backend:
+        address: "https://user-management-service-dev-931474023414.us-central1.run.app"
+        path_translation: APPEND_PATH_TO_ADDRESS
+  /api/v1/users/{user_id}/family_members_count:
+    post:
+      operationId: "UserController_create_or_update_family_members_count"
+      parameters:
+        - name: "user_id"
+          in: "path"
+          required: true
+          type: "number"
+      responses:
+        201:
+          $ref: "#/responses/Success"
+      security:
+        - IDP_JWT_AUTH: []
+        - GCLOUD_TOKEN_AUTH: []
+      x-google-backend:
+        address: "https://user-management-service-dev-931474023414.us-central1.run.app"
+        path_translation: APPEND_PATH_TO_ADDRESS
+    get:
+      operationId: "UserController_get_family_members_count"
+      parameters:
+        - name: "user_id"
+          in: "path"
+          required: true
+          type: "number"
+      responses:
+        200:
+          $ref: "#/responses/Success"
+      security:
+        - IDP_JWT_AUTH: []
+        - GCLOUD_TOKEN_AUTH: []
+      x-google-backend:
+        address: "https://user-management-service-dev-931474023414.us-central1.run.app"
+        path_translation: APPEND_PATH_TO_ADDRESS
+  /api/v1/users/{user_id}/household:
+    get:
+      operationId: "HouseholdController_getByUserId"
+      parameters:
+        - name: "user_id"
+          in: "path"
+          required: true
+          type: "string"
+      responses:
+        200:
+          $ref: "#/responses/Success"
+      security:
+        - IDP_JWT_AUTH: []
+        - GCLOUD_TOKEN_AUTH: []
+      x-google-backend:
+        address: "https://user-management-service-dev-931474023414.us-central1.run.app"
+        path_translation: APPEND_PATH_TO_ADDRESS
+    post:
+      operationId: "HouseholdController_create"
+      parameters:
+        - name: "user_id"
+          in: "path"
+          required: true
+          type: "string"
+      responses:
+        201:
+          $ref: "#/responses/Success"
+      security:
+        - IDP_JWT_AUTH: []
+        - GCLOUD_TOKEN_AUTH: []
+      x-google-backend:
+        address: "https://user-management-service-dev-931474023414.us-central1.run.app"
+        path_translation: APPEND_PATH_TO_ADDRESS
+    put:
+      operationId: "HouseholdController_updateByUserId"
+      parameters:
+        - name: "user_id"
+          in: "path"
+          required: true
+          type: "number"
+      responses:
+        200:
+          $ref: "#/responses/Success"
+      security:
+        - IDP_JWT_AUTH: []
+        - GCLOUD_TOKEN_AUTH: []
+      x-google-backend:
+        address: "https://user-management-service-dev-931474023414.us-central1.run.app"
+        path_translation: APPEND_PATH_TO_ADDRESS
+
+  /api/v1/users/send-otp:
+    post:
+      operationId: "UserController_send_otp"
+      responses:
+        201:
+          $ref: "#/responses/Success"
+      security:
+        []
+        # - IDP_JWT_AUTH: []
+        # - GCLOUD_TOKEN_AUTH: []
+      x-google-backend:
+        address: "https://user-management-service-dev-931474023414.us-central1.run.app"
+        path_translation: APPEND_PATH_TO_ADDRESS
+
+  /api/v1/household/{household_id}/household-users:
+    get:
+      operationId: "HouseholdController_get_household_users"
+      parameters:
+        - name: "household_id"
+          in: "path"
+          required: true
+          type: "string"
+      responses:
+        200:
+          $ref: "#/responses/Success"
+      security:
+        - IDP_JWT_AUTH: []
+        - GCLOUD_TOKEN_AUTH: []
+      x-google-backend:
+        address: "https://user-management-service-dev-931474023414.us-central1.run.app"
+        path_translation: APPEND_PATH_TO_ADDRESS
+
+  /api/v1/users/{user_id}/onboarding:
+    get:
+      operationId: "OnboardingController_get"
+      parameters:
+        - name: "user_id"
+          in: "path"
+          required: true
+          type: "string"
+      responses:
+        200:
+          $ref: "#/responses/Success"
+      security:
+        - IDP_JWT_AUTH: []
+        - GCLOUD_TOKEN_AUTH: []
+      x-google-backend:
+        address: "https://user-management-service-dev-931474023414.us-central1.run.app"
+        path_translation: APPEND_PATH_TO_ADDRESS
+    put:
+      operationId: "OnboardingController_update"
+      parameters:
+        - name: "user_id"
+          in: "path"
+          required: true
+          type: "string"
+      responses:
+        200:
+          $ref: "#/responses/Success"
+      security:
+        - IDP_JWT_AUTH: []
+        - GCLOUD_TOKEN_AUTH: []
+      x-google-backend:
+        address: "https://user-management-service-dev-931474023414.us-central1.run.app"
+        path_translation: APPEND_PATH_TO_ADDRESS
+
+  /api/v1/users/{user_id}/onboarding/progress:
+    get:
+      operationId: "OnboardingController_getProgress"
+      parameters:
+        - name: "user_id"
+          in: "path"
+          required: true
+          type: "string"
+      responses:
+        200:
+          $ref: "#/responses/Success"
+      security:
+        - IDP_JWT_AUTH: []
+        - GCLOUD_TOKEN_AUTH: []
+      x-google-backend:
+        address: "https://user-management-service-dev-931474023414.us-central1.run.app"
+        path_translation: APPEND_PATH_TO_ADDRESS
+
+  /api/v1/trust-levels:
+    post:
+      operationId: "TrustLevelController_create"
+      responses:
+        201:
+          $ref: "#/responses/Success"
+      security:
+        - IDP_JWT_AUTH: []
+        - GCLOUD_TOKEN_AUTH: []
+      x-google-backend:
+        address: "https://user-management-service-dev-931474023414.us-central1.run.app"
+        path_translation: APPEND_PATH_TO_ADDRESS
+  /api/v1/trust-levels/{name}:
+    get:
+      operationId: "TrustLevelController_getByName"
+      parameters:
+        - name: "name"
+          in: "path"
+          required: true
+          type: "string"
+      responses:
+        200:
+          $ref: "#/responses/Success"
+      security:
+        - IDP_JWT_AUTH: []
+        - GCLOUD_TOKEN_AUTH: []
+      x-google-backend:
+        address: "https://user-management-service-dev-931474023414.us-central1.run.app"
+        path_translation: APPEND_PATH_TO_ADDRESS
+  /api/v1/roles:
+    post:
+      operationId: "RoleController_create"
+      responses:
+        201:
+          $ref: "#/responses/Success"
+      security:
+        - IDP_JWT_AUTH: []
+        - GCLOUD_TOKEN_AUTH: []
+      x-google-backend:
+        address: "https://user-management-service-dev-931474023414.us-central1.run.app"
+        path_translation: APPEND_PATH_TO_ADDRESS
+
+  /api/v1/roles/{name}:
+    get:
+      operationId: "RoleController_getByName"
+      parameters:
+        - name: "name"
+          in: "path"
+          required: true
+          type: "string"
+      responses:
+        200:
+          $ref: "#/responses/Success"
+      security:
+        - IDP_JWT_AUTH: []
+        - GCLOUD_TOKEN_AUTH: []
+      x-google-backend:
+        address: "https://user-management-service-dev-931474023414.us-central1.run.app"
+        path_translation: APPEND_PATH_TO_ADDRESS
+
+  /api/v1/invitations:
+    post:
+      operationId: "InvitationController_create"
+      responses:
+        201:
+          $ref: "#/responses/Success"
+      security:
+        - IDP_JWT_AUTH: []
+        - GCLOUD_TOKEN_AUTH: []
+      x-google-backend:
+        address: "https://user-management-service-dev-931474023414.us-central1.run.app"
+        path_translation: APPEND_PATH_TO_ADDRESS
+
+  /api/v1/invitations/{household_id}:
+    get:
+      operationId: "InvitationController_get"
+      parameters:
+        - name: "household_id"
+          in: "path"
+          required: true
+          type: "number"
+        - name: "status"
+          in: "query"
+          required: false
+          type: "string"
+        - name: "latest"
+          in: "query"
+          required: false
+          type: "boolean"
+      responses:
+        200:
+          $ref: "#/responses/Success"
+      security:
+        - IDP_JWT_AUTH: []
+        - GCLOUD_TOKEN_AUTH: []
+      x-google-backend:
+        address: "https://user-management-service-dev-931474023414.us-central1.run.app"
+        path_translation: APPEND_PATH_TO_ADDRESS
+
+    put:
+      operationId: "InvitationController_update"
+      parameters:
+        - name: "household_id"
+          in: "path"
+          required: true
+          type: "number"
+      responses:
+        200:
+          $ref: "#/responses/Success"
+      security:
+        - IDP_JWT_AUTH: []
+        - GCLOUD_TOKEN_AUTH: []
+      x-google-backend:
+        address: "https://user-management-service-dev-931474023414.us-central1.run.app"
+        path_translation: APPEND_PATH_TO_ADDRESS
+
+  /api/v1/invitations/accept:
+    post:
+      operationId: "InvitationController_accept"
+      responses:
+        201:
+          $ref: "#/responses/Success"
+      security:
+        - IDP_JWT_AUTH: []
+        - GCLOUD_TOKEN_AUTH: []
+      x-google-backend:
+        address: "https://user-management-service-dev-931474023414.us-central1.run.app"
+        path_translation: APPEND_PATH_TO_ADDRESS
+
+  /api/v1/invitations/cancel/{household_id}:
+    post:
+      operationId: "InvitationController_cancel"
+      parameters:
+        - name: "household_id"
+          in: "path"
+          required: true
+          type: "number"
+      responses:
+        200:
+          $ref: "#/responses/Success"
+      security:
+        - IDP_JWT_AUTH: []
+        - GCLOUD_TOKEN_AUTH: []
+      x-google-backend:
+        address: "https://user-management-service-dev-931474023414.us-central1.run.app"
+        path_translation: APPEND_PATH_TO_ADDRESS
+
+  /api/v1/invitations/status/{invitation_token}:
+    get:
+      operationId: "InvitationController_status_get"
+      parameters:
+        - name: "invitation_token"
+          in: "path"
+          required: true
+          type: "number"
+      responses:
+        200:
+          $ref: "#/responses/Success"
+      security:
+        []
+        # - IDP_JWT_AUTH: []
+        # - GCLOUD_TOKEN_AUTH: []
+      x-google-backend:
+        address: "https://user-management-service-dev-931474023414.us-central1.run.app"
+        path_translation: APPEND_PATH_TO_ADDRESS
+
+  # ------------------- Document Management Service -----------------------------
+  /documents/api-docs/{extra_path}:
+    get:
+      operationId: "documents_api_docs_extra_get"
+      parameters:
+        - name: "extra_path"
+          in: "path"
+          required: true
+          type: "string"
+      responses:
+        200:
+          $ref: "#/responses/Success"
+      security: []
+      x-google-backend:
+        address: "https://document-management-service-dev-931474023414.us-central1.run.app"
+        path_translation: APPEND_PATH_TO_ADDRESS
+
+  /documents/api-docs:
+    get:
+      operationId: "documents_api_docs_get"
+      responses:
+        200:
+          $ref: "#/responses/Success"
+      security: []
+      x-google-backend:
+        address: "https://document-management-service-dev-931474023414.us-central1.run.app"
+        path_translation: APPEND_PATH_TO_ADDRESS
+
+  /api/v1/document-types:
+    post:
+      operationId: "DocumentTypesController_create"
+      consumes:
+        - application/json
+      responses:
+        201:
+          $ref: "#/responses/Success"
+      security:
+        - IDP_JWT_AUTH: []
+        - GCLOUD_TOKEN_AUTH: []
+      x-google-backend:
+        address: "https://document-management-service-dev-931474023414.us-central1.run.app"
+        path_translation: APPEND_PATH_TO_ADDRESS
+
+  /api/v1/document-types/bulk:
+    post:
+      operationId: "DocumentTypesController_createBulk"
+      consumes:
+        - application/json
+      responses:
+        201:
+          $ref: "#/responses/Success"
+      security:
+        - IDP_JWT_AUTH: []
+        - GCLOUD_TOKEN_AUTH: []
+      x-google-backend:
+        address: "https://document-management-service-dev-931474023414.us-central1.run.app"
+        path_translation: APPEND_PATH_TO_ADDRESS
+
+  /api/v1/document-types/{household_id}:
+    get:
+      operationId: "DocumentTypesController_root"
+      parameters:
+        - name: "household_id"
+          in: "path"
+          required: true
+          type: "number"
+          format: "int64"
+      responses:
+        200:
+          $ref: "#/responses/Success"
+      security:
+        - IDP_JWT_AUTH: []
+        - GCLOUD_TOKEN_AUTH: []
+      x-google-backend:
+        address: "https://document-management-service-dev-931474023414.us-central1.run.app"
+        path_translation: APPEND_PATH_TO_ADDRESS
+
+  /api/v1/document-types/{household_id}/{document_type_id}:
+    get:
+      operationId: "DocumentTypesController_get"
+      parameters:
+        - name: "household_id"
+          in: "path"
+          required: true
+          type: "number"
+          format: "int64"
+        - name: "document_type_id"
+          in: "path"
+          required: true
+          type: "number"
+          format: "int64"
+      responses:
+        200:
+          $ref: "#/responses/Success"
+      security:
+        - IDP_JWT_AUTH: []
+        - GCLOUD_TOKEN_AUTH: []
+      x-google-backend:
+        address: "https://document-management-service-dev-931474023414.us-central1.run.app"
+        path_translation: APPEND_PATH_TO_ADDRESS
+
+  /api/v1/document-types-category:
+    get:
+      operationId: "DocumentController_getdocumentTypes"
+      summary: "Get docoument type category list"
+      responses:
+        200:
+          $ref: "#/responses/Success"
+      security:
+        - IDP_JWT_AUTH: []
+        - GCLOUD_TOKEN_AUTH: []
+      x-google-backend:
+        address: "https://document-management-service-dev-931474023414.us-central1.run.app"
+        path_translation: APPEND_PATH_TO_ADDRESS
+    post:
+      operationId: "DocumentController_create_documentTypeCategory"
+      summary: "Create a document type category."
+      responses:
+        201:
+          $ref: "#/responses/Success"
+      security:
+        - IDP_JWT_AUTH: []
+        - GCLOUD_TOKEN_AUTH: []
+      x-google-backend:
+        address: "https://document-management-service-dev-931474023414.us-central1.run.app"
+        path_translation: APPEND_PATH_TO_ADDRESS
+
+  /api/v1/document-types-category/{document_type_category_id}:
+    put:
+      operationId: "DocumentController_update_documentTypeCategory"
+      summary: "Update a document type category."
+      parameters:
+        - name: "document_type_category_id"
+          in: "path"
+          required: true
+          type: "number"
+          format: "int64"
+      responses:
+        200:
+          $ref: "#/responses/Success"
+      security:
+        - IDP_JWT_AUTH: []
+        - GCLOUD_TOKEN_AUTH: []
+      x-google-backend:
+        address: "https://document-management-service-dev-931474023414.us-central1.run.app"
+        path_translation: APPEND_PATH_TO_ADDRESS
+    delete:
+      operationId: "DocumentController_delete_DocumentTypeCategory"
+      parameters:
+        - name: "document_type_category_id"
+          in: "path"
+          required: true
+          type: "number"
+          format: "int64"
+      responses:
+        200:
+          $ref: "#/responses/Success"
+      security:
+        - IDP_JWT_AUTH: []
+        - GCLOUD_TOKEN_AUTH: []
+      x-google-backend:
+        address: "https://document-management-service-dev-931474023414.us-central1.run.app"
+        path_translation: APPEND_PATH_TO_ADDRESS
+
+  /api/v1/document-types-category/household/importance:
+    post:
+      operationId: "DocumentController_post_documentTypeCategoryImportance"
+      summary: "Create docoument type importance"
+      responses:
+        200:
+          $ref: "#/responses/Success"
+      security:
+        - IDP_JWT_AUTH: []
+        - GCLOUD_TOKEN_AUTH: []
+      x-google-backend:
+        address: "https://document-management-service-dev-931474023414.us-central1.run.app"
+        path_translation: APPEND_PATH_TO_ADDRESS
+    put:
+      operationId: "DocumentController_put_documentTypeCategoryImportance"
+      summary: "Update a document type importance."
+      responses:
+        201:
+          $ref: "#/responses/Success"
+      security:
+        - IDP_JWT_AUTH: []
+        - GCLOUD_TOKEN_AUTH: []
+      x-google-backend:
+        address: "https://document-management-service-dev-931474023414.us-central1.run.app"
+        path_translation: APPEND_PATH_TO_ADDRESS
+
+  /api/v1/document-types-category/{document_type_category_id}/household/{household_id}/importance:
+    get:
+      operationId: "DocumentController_get_documentTypeCategoryImportance"
+      summary: "Create docoument type importance"
+      parameters:
+        - name: "household_id"
+          in: "path"
+          required: true
+          type: "number"
+          format: "int64"
+        - name: "document_type_category_id"
+          in: "path"
+          required: true
+          type: "number"
+          format: "int64"
+      responses:
+        200:
+          $ref: "#/responses/Success"
+      security:
+        - IDP_JWT_AUTH: []
+        - GCLOUD_TOKEN_AUTH: []
+      x-google-backend:
+        address: "https://document-management-service-dev-931474023414.us-central1.run.app"
+        path_translation: APPEND_PATH_TO_ADDRESS
+    delete:
+      operationId: "DocumentController_delete_documentTypeCategoryImportance"
+      summary: "Update a document type importance."
+      parameters:
+        - name: "household_id"
+          in: "path"
+          required: true
+          type: "number"
+          format: "int64"
+        - name: "document_type_category_id"
+          in: "path"
+          required: true
+          type: "number"
+          format: "int64"
+
+      responses:
+        201:
+          $ref: "#/responses/Success"
+      security:
+        - IDP_JWT_AUTH: []
+        - GCLOUD_TOKEN_AUTH: []
+      x-google-backend:
+        address: "https://document-management-service-dev-931474023414.us-central1.run.app"
+        path_translation: APPEND_PATH_TO_ADDRESS
+
+  /api/v1/documents:
+    post:
+      operationId: "DocumentController_createDocument"
+      summary: "Upload a new document"
+      consumes:
+        - multipart/form-data
+      parameters: []
+      responses:
+        200:
+          $ref: "#/responses/Success"
+      security:
+        - IDP_JWT_AUTH: []
+        - GCLOUD_TOKEN_AUTH: []
+      x-google-backend:
+        address: "https://document-management-service-dev-931474023414.us-central1.run.app"
+        path_translation: APPEND_PATH_TO_ADDRESS
+    put:
+      operationId: "DocumentController_updateDocument"
+      summary: "Update a document"
+      consumes:
+        - multipart/form-data
+      parameters: []
+      responses:
+        200:
+          $ref: "#/responses/Success"
+      security:
+        - IDP_JWT_AUTH: []
+        - GCLOUD_TOKEN_AUTH: []
+      x-google-backend:
+        address: "https://document-management-service-dev-931474023414.us-central1.run.app"
+        path_translation: APPEND_PATH_TO_ADDRESS
+
+  /api/v1/documents/preview/{id}:
+    get:
+      operationId: "DocumentController_download"
+      parameters:
+        - name: "id"
+          in: "path"
+          required: true
+          type: "number"
+          format: "int64"
+      responses:
+        200:
+          $ref: "#/responses/Success"
+      security:
+        - IDP_JWT_AUTH: []
+        - GCLOUD_TOKEN_AUTH: []
+      x-google-backend:
+        address: "https://document-management-service-dev-931474023414.us-central1.run.app"
+        path_translation: APPEND_PATH_TO_ADDRESS
+  /api/v1/documents/preview-signed-url/{id}:
+    get:
+      operationId: "DocumentsController_preview_signed_url"
+      parameters:
+        - name: "id"
+          in: "path"
+          required: true
+          type: "number"
+          format: "int64"
+      responses:
+        200:
+          $ref: "#/responses/Success"
+      security:
+        - IDP_JWT_AUTH: []
+        - GCLOUD_TOKEN_AUTH: []
+      x-google-backend:
+        address: "https://document-management-service-dev-931474023414.us-central1.run.app"
+        path_translation: APPEND_PATH_TO_ADDRESS
+  /api/v1/documents/upload-signed-url:
+    post:
+      operationId: "DocumentsController_upload_signed_url"
+      responses:
+        200:
+          $ref: "#/responses/Success"
+      security:
+        - IDP_JWT_AUTH: []
+        - GCLOUD_TOKEN_AUTH: []
+      x-google-backend:
+        address: "https://document-management-service-dev-931474023414.us-central1.run.app"
+        path_translation: APPEND_PATH_TO_ADDRESS
+  /api/v1/documents/compose-chunk-upload:
+    post:
+      operationId: "DocumentsController_chunk_upload"
+      responses:
+        200:
+          $ref: "#/responses/Success"
+      security:
+        - IDP_JWT_AUTH: []
+        - GCLOUD_TOKEN_AUTH: []
+      x-google-backend:
+        address: "https://document-management-service-dev-931474023414.us-central1.run.app"
+        path_translation: APPEND_PATH_TO_ADDRESS
+
+  /api/v1/documents/{document_id}:
+    get:
+      operationId: "DocumentsController_get_by_id"
+      parameters:
+        - name: "document_id"
+          in: "path"
+          required: true
+          type: "number"
+          format: "int64"
+      responses:
+        200:
+          $ref: "#/responses/Success"
+      security:
+        - IDP_JWT_AUTH: []
+        - GCLOUD_TOKEN_AUTH: []
+      x-google-backend:
+        address: "https://document-management-service-dev-931474023414.us-central1.run.app"
+        path_translation: APPEND_PATH_TO_ADDRESS
+    put:
+      operationId: "DocumentsController_update_by_id"
+      parameters:
+        - name: "document_id"
+          in: "path"
+          required: true
+          type: "number"
+          format: "int64"
+      responses:
+        200:
+          $ref: "#/responses/Success"
+      security:
+        - IDP_JWT_AUTH: []
+        - GCLOUD_TOKEN_AUTH: []
+        - DOCUMENT_VALIDATOR_FUNCTION_TOKEN_AUTH: []
+      x-google-backend:
+        address: "https://document-management-service-dev-931474023414.us-central1.run.app"
+        path_translation: APPEND_PATH_TO_ADDRESS
+
+  /api/v1/documents/{household_id}/household:
+    get:
+      operationId: "DocumentsController_get_by_household"
+      parameters:
+        - name: "household_id"
+          in: "path"
+          required: true
+          type: "number"
+          format: "int64"
+      responses:
+        200:
+          $ref: "#/responses/Success"
+      security:
+        - IDP_JWT_AUTH: []
+        - GCLOUD_TOKEN_AUTH: []
+      x-google-backend:
+        address: "https://document-management-service-dev-931474023414.us-central1.run.app"
+        path_translation: APPEND_PATH_TO_ADDRESS
+  /api/v1/documents/{household_id}/uploaders:
+    get:
+      operationId: "DocumentsController_get_uploaders"
+      parameters:
+        - name: "household_id"
+          in: "path"
+          required: true
+          type: "number"
+          format: "int64"
+      responses:
+        200:
+          $ref: "#/responses/Success"
+      security:
+        - IDP_JWT_AUTH: []
+        - GCLOUD_TOKEN_AUTH: []
+      x-google-backend:
+        address: "https://document-management-service-dev-931474023414.us-central1.run.app"
+        path_translation: APPEND_PATH_TO_ADDRESS
+  /api/v1/documents/activity/{document_id}:
+    post:
+      operationId: "DocumentssController_activity_documents"
+      parameters:
+        - name: "document_id"
+          in: "path"
+          required: true
+          type: "number"
+          format: "int64"
+      responses:
+        200:
+          $ref: "#/responses/Success"
+      security:
+        - IDP_JWT_AUTH: []
+        - GCLOUD_TOKEN_AUTH: []
+      x-google-backend:
+        address: "https://document-management-service-dev-931474023414.us-central1.run.app"
+        path_translation: APPEND_PATH_TO_ADDRESS
+
+  /api/v1/documents/{household_id}/{document_type_id}:
+    get:
+      operationId: "DocumentsController_get_documents"
+      parameters:
+        - name: "household_id"
+          in: "path"
+          required: true
+          type: "number"
+          format: "int64"
+        - name: "document_type_id"
+          in: "path"
+          required: true
+          type: "number"
+          format: "int64"
+      responses:
+        200:
+          $ref: "#/responses/Success"
+      security:
+        - IDP_JWT_AUTH: []
+        - GCLOUD_TOKEN_AUTH: []
+      x-google-backend:
+        address: "https://document-management-service-dev-931474023414.us-central1.run.app"
+
+  /api/v1/documents/{document_id}/comments:
+    get:
+      operationId: "DocumentsController_get_comments"
+      parameters:
+        - name: "document_id"
+          in: "path"
+          required: true
+          type: "number"
+          format: "int64"
+      responses:
+        200:
+          $ref: "#/responses/Success"
+      security:
+        - IDP_JWT_AUTH: []
+        - GCLOUD_TOKEN_AUTH: []
+      x-google-backend:
+        address: "https://document-management-service-dev-931474023414.us-central1.run.app"
+        path_translation: APPEND_PATH_TO_ADDRESS
+  /api/v1/documents/comments:
+    post:
+      operationId: "DocumentsController_post_comments"
+      responses:
+        201:
+          $ref: "#/responses/Success"
+      security:
+        - IDP_JWT_AUTH: []
+        - GCLOUD_TOKEN_AUTH: []
+      x-google-backend:
+        address: "https://document-management-service-dev-931474023414.us-central1.run.app"
+        path_translation: APPEND_PATH_TO_ADDRESS
+  /api/v1/contacts:
+    post:
+      operationId: "ContactsController_create"
+      responses:
+        201:
+          $ref: "#/responses/Success"
+      security:
+        - IDP_JWT_AUTH: []
+        - GCLOUD_TOKEN_AUTH: []
+      x-google-backend:
+        address: "https://document-management-service-dev-931474023414.us-central1.run.app"
+        path_translation: APPEND_PATH_TO_ADDRESS
+    get:
+      operationId: "ContactsController_get"
+      responses:
+        200:
+          $ref: "#/responses/Success"
+      security:
+        - IDP_JWT_AUTH: []
+        - GCLOUD_TOKEN_AUTH: []
+      x-google-backend:
+        address: "https://document-management-service-dev-931474023414.us-central1.run.app"
+        path_translation: APPEND_PATH_TO_ADDRESS
+  /api/v1/contacts/household/{household_id}:
+    get:
+      operationId: "ContactsController_getByHouseholdId"
+      parameters:
+        - name: "household_id"
+          in: "path"
+          required: true
+          type: "number"
+          format: "int64"
+      responses:
+        200:
+          $ref: "#/responses/Success"
+      security:
+        - IDP_JWT_AUTH: []
+        - GCLOUD_TOKEN_AUTH: []
+      x-google-backend:
+        address: "https://document-management-service-dev-931474023414.us-central1.run.app"
+        path_translation: APPEND_PATH_TO_ADDRESS
+  /api/v1/contacts/household/{household_id}/members:
+    get:
+      operationId: "ContactsAndMembersController_getByHouseholdId"
+      parameters:
+        - name: "household_id"
+          in: "path"
+          required: true
+          type: "number"
+          format: "int64"
+      responses:
+        200:
+          $ref: "#/responses/Success"
+      security:
+        - IDP_JWT_AUTH: []
+        - GCLOUD_TOKEN_AUTH: []
+      x-google-backend:
+        address: "https://document-management-service-dev-931474023414.us-central1.run.app"
+        path_translation: APPEND_PATH_TO_ADDRESS
+
+  /api/v1/contacts/{contact_id}:
+    get:
+      operationId: "ContactsController_getById"
+      parameters:
+        - name: "contact_id"
+          in: "path"
+          required: true
+          type: "number"
+          format: "int64"
+      responses:
+        200:
+          $ref: "#/responses/Success"
+      security:
+        - IDP_JWT_AUTH: []
+        - GCLOUD_TOKEN_AUTH: []
+      x-google-backend:
+        address: "https://document-management-service-dev-931474023414.us-central1.run.app"
+        path_translation: APPEND_PATH_TO_ADDRESS
+    put:
+      operationId: "ContactsController_update"
+      parameters:
+        - name: "contact_id"
+          in: "path"
+          required: true
+          type: "number"
+          format: "int64"
+      responses:
+        200:
+          $ref: "#/responses/Success"
+      security:
+        - IDP_JWT_AUTH: []
+        - GCLOUD_TOKEN_AUTH: []
+      x-google-backend:
+        address: "https://document-management-service-dev-931474023414.us-central1.run.app"
+        path_translation: APPEND_PATH_TO_ADDRESS
+    delete:
+      operationId: "ContactsController_delete"
+      parameters:
+        - name: "contact_id"
+          in: "path"
+          required: true
+          type: "number"
+          format: "int64"
+      responses:
+        200:
+          $ref: "#/responses/Success"
+      security:
+        - IDP_JWT_AUTH: []
+        - GCLOUD_TOKEN_AUTH: []
+      x-google-backend:
+        address: "https://document-management-service-dev-931474023414.us-central1.run.app"
+        path_translation: APPEND_PATH_TO_ADDRESS
+
+  /api/v1/user/profile/upload:
+    post:
+      operationId: "DocumentController_upload_profile"
+      summary: "Upload profile image"
+      consumes:
+        - multipart/form-data
+      parameters: []
+      responses:
+        200:
+          $ref: "#/responses/Success"
+      security:
+        - IDP_JWT_AUTH: []
+        - GCLOUD_TOKEN_AUTH: []
+      x-google-backend:
+        address: "https://document-management-service-dev-931474023414.us-central1.run.app"
+        path_translation: APPEND_PATH_TO_ADDRESS
+
+  # ------------------- Finance Management Service -----------------------------
+  /finances/api-docs/{extra_path}:
+    get:
+      operationId: "finances_api_docs_extra_get"
+      parameters:
+        - name: "extra_path"
+          in: "path"
+          required: true
+          type: "string"
+      responses:
+        200:
+          $ref: "#/responses/Success"
+      security: []
+      x-google-backend:
+        address: "https://finance-management-service-dev-931474023414.us-central1.run.app"
+        path_translation: APPEND_PATH_TO_ADDRESS
+
+  /finances/api-docs:
+    get:
+      operationId: "finances_api_docs_get"
+      responses:
+        200:
+          $ref: "#/responses/Success"
+      security: []
+      x-google-backend:
+        address: "https://finance-management-service-dev-931474023414.us-central1.run.app"
+        path_translation: APPEND_PATH_TO_ADDRESS
+
+  /api/v1/plaid/create-link-token:
+    post:
+      operationId: "PlaidController_createLinkToken"
+      summary: "Create a Plaid link token"
+      responses:
+        201:
+          $ref: "#/responses/Success"
+      security:
+        - IDP_JWT_AUTH: []
+        - GCLOUD_TOKEN_AUTH: []
+      x-google-backend:
+        address: "https://finance-management-service-dev-931474023414.us-central1.run.app"
+        path_translation: APPEND_PATH_TO_ADDRESS
+
+  /api/v1/plaid/set-access-token:
+    post:
+      operationId: "PlaidController_setAccessToken"
+      summary: "Exchange a public token for an access token"
+      parameters: []
+      responses:
+        201:
+          $ref: "#/responses/Success"
+      security: []
+      x-google-backend:
+        address: "https://finance-management-service-dev-931474023414.us-central1.run.app"
+        path_translation: APPEND_PATH_TO_ADDRESS
+
+  /api/v1/plaid/auth:
+    get:
+      operationId: "PlaidController_getAuth"
+      summary: "Retrieve ACH or ETF Auth data for an Item's accounts"
+      parameters:
+        - name: "access_token"
+          in: "query"
+          required: true
+          type: "string"
+      responses:
+        200:
+          $ref: "#/responses/Success"
+      security:
+        - IDP_JWT_AUTH: []
+        - GCLOUD_TOKEN_AUTH: []
+      x-google-backend:
+        address: "https://finance-management-service-dev-931474023414.us-central1.run.app"
+        path_translation: APPEND_PATH_TO_ADDRESS
+
+  /api/v1/institutions/search:
+    get:
+      operationId: "InstitutionController_searchInstitutions"
+      summary: "Search institutions by name or get highlighted institutions"
+      parameters:
+        - name: "search"
+          in: "query"
+          required: false
+          type: "string"
+        - name: "page"
+          in: "query"
+          required: false
+          type: "number"
+
+        - name: "pageSize"
+          in: "query"
+          required: false
+          type: "number"
+      responses:
+        200:
+          $ref: "#/responses/Success"
+      security:
+        - IDP_JWT_AUTH: []
+        - GCLOUD_TOKEN_AUTH: []
+      x-google-backend:
+        address: "https://finance-management-service-dev-931474023414.us-central1.run.app"
+        path_translation: APPEND_PATH_TO_ADDRESS
+
+  /api/v1/financial-account-types:
+    get:
+      operationId: "FinancialAccountTypesController_getAllAccountTypes"
+      summary: "Get all financial account types"
+      responses:
+        200:
+          $ref: "#/responses/Success"
+      security:
+        - IDP_JWT_AUTH: []
+        - GCLOUD_TOKEN_AUTH: []
+      x-google-backend:
+        address: "https://finance-management-service-dev-931474023414.us-central1.run.app"
+        path_translation: APPEND_PATH_TO_ADDRESS
+
+  /api/v1/financial-accounts:
+    post:
+      operationId: "FinancialAccountsController_createFinancialAccount"
+      summary: "Create a new financial account"
+      responses:
+        201:
+          $ref: "#/responses/Success"
+      security:
+        - IDP_JWT_AUTH: []
+        - GCLOUD_TOKEN_AUTH: []
+      x-google-backend:
+        address: "https://finance-management-service-dev-931474023414.us-central1.run.app"
+        path_translation: APPEND_PATH_TO_ADDRESS
+    get:
+      operationId: "FinancialAccountsController_getAllFinancialAccounts"
+      summary: "Get all financial accounts"
+      responses:
+        200:
+          $ref: "#/responses/Success"
+      security:
+        - IDP_JWT_AUTH: []
+        - GCLOUD_TOKEN_AUTH: []
+      x-google-backend:
+        address: "https://finance-management-service-dev-931474023414.us-central1.run.app"
+        path_translation: APPEND_PATH_TO_ADDRESS
+
+  /api/v1/financial-accounts/{userId}:
+    get:
+      operationId: "FinancialAccountsController_getAccountsByUserId"
+      summary: "Get financial accounts by user ID"
+      parameters:
+        - name: "userId"
+          in: "path"
+          required: true
+          type: "number"
+      responses:
+        200:
+          $ref: "#/responses/Success"
+      security:
+        - IDP_JWT_AUTH: []
+        - GCLOUD_TOKEN_AUTH: []
+      x-google-backend:
+        address: "https://finance-management-service-dev-931474023414.us-central1.run.app"
+        path_translation: APPEND_PATH_TO_ADDRESS
+
+  /api/v1/financial-accounts/{id}:
+    put:
+      operationId: "FinancialAccountsController_updateFinancialAccount"
+      summary: "Update a financial account"
+      parameters:
+        - name: "id"
+          in: "path"
+          required: true
+          type: "number"
+      responses:
+        200:
+          $ref: "#/responses/Success"
+      security:
+        - IDP_JWT_AUTH: []
+        - GCLOUD_TOKEN_AUTH: []
+      x-google-backend:
+        address: "https://finance-management-service-dev-931474023414.us-central1.run.app"
+        path_translation: APPEND_PATH_TO_ADDRESS
+    delete:
+      operationId: "FinancialAccountsController_deleteFinancialAccount"
+      summary: "Delete a financial account"
+      parameters:
+        - name: "id"
+          in: "path"
+          required: true
+          type: "number"
+      responses:
+        200:
+          $ref: "#/responses/Success"
+      security:
+        - IDP_JWT_AUTH: []
+        - GCLOUD_TOKEN_AUTH: []
+      x-google-backend:
+        address: "https://finance-management-service-dev-931474023414.us-central1.run.app"
+        path_translation: APPEND_PATH_TO_ADDRESS
+  /api/v1/financial-accounts/progress/{user_id}:
+    get:
+      operationId: "FinancialAccountsController_getProgress"
+      summary: "Get the progress of financial accounts"
+      parameters:
+        - name: "user_id"
+          in: "path"
+          required: true
+          type: "string"
+      responses:
+        200:
+          $ref: "#/responses/Success"
+      security:
+        - IDP_JWT_AUTH: []
+        - GCLOUD_TOKEN_AUTH: []
+      x-google-backend:
+        address: "https://finance-management-service-dev-931474023414.us-central1.run.app"
+        path_translation: APPEND_PATH_TO_ADDRESS
+  /api/v1/financial-accounts/bulk:
+    post:
+      operationId: "FinancialAccountsController_createOrDeleteBulkFinancialAccounts"
+      summary: "Create or delete financial accounts in bulk"
+      responses:
+        201:
+          $ref: "#/responses/Success"
+      security:
+        - IDP_JWT_AUTH: []
+        - GCLOUD_TOKEN_AUTH: []
+      x-google-backend:
+        address: "https://finance-management-service-dev-931474023414.us-central1.run.app"
+        path_translation: APPEND_PATH_TO_ADDRESS
+
+  # ----------------------------- Access Management Service ---------------------------------------
+  /access/api-docs/{extra_path}:
+    get:
+      operationId: "access_api_docs_extra_get"
+      parameters:
+        - name: "extra_path"
+          in: "path"
+          required: true
+          type: "string"
+      responses:
+        200:
+          $ref: "#/responses/Success"
+      security: []
+      x-google-backend:
+        address: "https://access-management-service-dev-931474023414.us-central1.run.app"
+        path_translation: APPEND_PATH_TO_ADDRESS
+
+  /access/api-docs:
+    get:
+      operationId: "access_api_docs_get"
+      responses:
+        200:
+          $ref: "#/responses/Success"
+      security: []
+      x-google-backend:
+        address: "https://access-management-service-dev-931474023414.us-central1.run.app"
+        path_translation: APPEND_PATH_TO_ADDRESS
+
+  /api/v1/access/access-item/predefined:
+    get:
+      operationId: "accessController_getaccess"
+      summary: "Get predefined access list"
+      responses:
+        200:
+          $ref: "#/responses/Success"
+      security:
+        - IDP_JWT_AUTH: []
+        - GCLOUD_TOKEN_AUTH: []
+      x-google-backend:
+        address: "https://access-management-service-dev-931474023414.us-central1.run.app"
+        path_translation: APPEND_PATH_TO_ADDRESS
+
+  /api/v1/access/user-access:
+    post:
+      operationId: "accessController_createaccess"
+      summary: "Create an acceess of household."
+      responses:
+        201:
+          $ref: "#/responses/Success"
+      security:
+        - IDP_JWT_AUTH: []
+        - GCLOUD_TOKEN_AUTH: []
+      x-google-backend:
+        address: "https://access-management-service-dev-931474023414.us-central1.run.app"
+        path_translation: APPEND_PATH_TO_ADDRESS
+
+  /api/v1/access/user-access/{user_access_id}:
+    put:
+      operationId: "accessController_updateaccess"
+      summary: "Update an access of the household."
+      parameters:
+        - name: "user_access_id"
+          in: "path"
+          required: true
+          type: "number"
+      responses:
+        200:
+          $ref: "#/responses/Success"
+      security:
+        - IDP_JWT_AUTH: []
+        - GCLOUD_TOKEN_AUTH: []
+      x-google-backend:
+        address: "https://access-management-service-dev-931474023414.us-central1.run.app"
+        path_translation: APPEND_PATH_TO_ADDRESS
+    get:
+      operationId: "accessController_getaccessOfHousehold"
+      summary: "Get the access of household"
+      parameters:
+        - name: "user_access_id"
+          in: "path"
+          required: true
+          type: "number"
+      responses:
+        200:
+          $ref: "#/responses/Success"
+      security:
+        - IDP_JWT_AUTH: []
+        - GCLOUD_TOKEN_AUTH: []
+      x-google-backend:
+        address: "https://access-management-service-dev-931474023414.us-central1.run.app"
+        path_translation: APPEND_PATH_TO_ADDRESS
+
+  /api/v1/access/user-access/household/{household_id}:
+    get:
+      operationId: "accessController_get_all_household_access"
+      summary: "Get all access of the household."
+      parameters:
+        - name: "household_id"
+          in: "path"
+          required: true
+          type: "number"
+      responses:
+        200:
+          $ref: "#/responses/Success"
+      security:
+        - IDP_JWT_AUTH: []
+        - GCLOUD_TOKEN_AUTH: []
+      x-google-backend:
+        address: "https://access-management-service-dev-931474023414.us-central1.run.app"
+        path_translation: APPEND_PATH_TO_ADDRESS
+
+  /api/v1/access-activity/{user_access_id}:
+    get:
+      operationId: "accessController_get_access_activity"
+      summary: "Get an comment or updates of user access of the household."
+      parameters:
+        - name: "user_access_id"
+          in: "path"
+          required: true
+          type: "number"
+      responses:
+        200:
+          $ref: "#/responses/Success"
+      security:
+        - IDP_JWT_AUTH: []
+        - GCLOUD_TOKEN_AUTH: []
+      x-google-backend:
+        address: "https://access-management-service-dev-931474023414.us-central1.run.app"
+        path_translation: APPEND_PATH_TO_ADDRESS
+
+  /api/v1/access-activity:
+    post:
+      operationId: "accessController_add_access_activity"
+      summary: "Add the comment or update to the user access of the household."
+      responses:
+        200:
+          $ref: "#/responses/Success"
+      security:
+        - IDP_JWT_AUTH: []
+        - GCLOUD_TOKEN_AUTH: []
+      x-google-backend:
+        address: "https://access-management-service-dev-931474023414.us-central1.run.app"
+        path_translation: APPEND_PATH_TO_ADDRESS
+
+  # ----------------------------- SMS Service ---------------------------------------
+  /sms/api-docs/{extra_path}:
+    get:
+      operationId: "sms_api_docs_extra_get"
+      parameters:
+        - name: "extra_path"
+          in: "path"
+          required: true
+          type: "string"
+      responses:
+        200:
+          $ref: "#/responses/Success"
+      security: []
+      x-google-backend:
+        address: "https://sms-service-dev-931474023414.us-central1.run.app"
+        path_translation: APPEND_PATH_TO_ADDRESS
+
+  /sms/api-docs:
+    get:
+      operationId: "sms_api_docs_get"
+      responses:
+        200:
+          $ref: "#/responses/Success"
+      security: []
+      x-google-backend:
+        address: "https://sms-service-dev-931474023414.us-central1.run.app"
+        path_translation: APPEND_PATH_TO_ADDRESS
+
+  /api/v1/sms/send-otp:
+    post:
+      operationId: "OtpController_sendOtp"
+      summary: "Send OTP to a phone number"
+      responses:
+        201:
+          $ref: "#/responses/Success"
+      security:
+        - IDP_JWT_AUTH: []
+        - GCLOUD_TOKEN_AUTH: []
+      x-google-backend:
+        address: "https://sms-service-dev-931474023414.us-central1.run.app"
+        path_translation: APPEND_PATH_TO_ADDRESS
+
+  # .........................................................PUB SUB consumers--------------------
+
+  /api/email-response/handle:
+    post:
+      operationId: "email_response_post"
+      responses:
+        200:
+          $ref: "#/responses/Success"
+      security: []
+      x-google-backend:
+        address: "https://pub-sub-consumers-dev-931474023414.us-central1.run.app"
+        path_translation: APPEND_PATH_TO_ADDRESS
+
+  # .........................................................Notification Service consumers--------------------
+
+  /mail/api-docs:
+    get:
+      operationId: "notification_service_api_docs"
+      responses:
+        200:
+          $ref: "#/responses/Success"
+      security: []
+      x-google-backend:
+        address: "https://notification-management-service-dev-931474023414.us-central1.run.app"
+        path_translation: APPEND_PATH_TO_ADDRESS
+
+  #.............................................................notification service.............................
+  /notification/api-docs/{extra_path}:
+    get:
+      operationId: "notification_api_docs_extra_get"
+      parameters:
+        - name: "extra_path"
+          in: "path"
+          required: true
+          type: "string"
+      responses:
+        200:
+          $ref: "#/responses/Success"
+      security: []
+      x-google-backend:
+        address: "https://notification-management-service-dev-931474023414.us-central1.run.app"
+        path_translation: APPEND_PATH_TO_ADDRESS
+
+  /notification/api-docs:
+    get:
+      operationId: "notification_api_docs_get"
+      responses:
+        200:
+          $ref: "#/responses/Success"
+      security: []
+      x-google-backend:
+        address: "https://notification-management-service-dev-931474023414.us-central1.run.app"
+        path_translation: APPEND_PATH_TO_ADDRESS
+
+  /api/v1/mailgun/webhook:
+    post:
+      operationId: "notification_mailgun_webhook_event"
+      responses:
+        200:
+          $ref: "#/responses/Success"
+      security: []
+      x-google-backend:
+        address: "https://notification-management-service-dev-931474023414.us-central1.run.app"
+        path_translation: APPEND_PATH_TO_ADDRESS
+
+  /api/v1/mailgun/email-response/handle:
+    post:
+      operationId: "notification_mailgun_email_response_handle"
+      responses:
+        200:
+          $ref: "#/responses/Success"
+      security: []
+      x-google-backend:
+        address: "https://notification-management-service-dev-931474023414.us-central1.run.app"
+        path_translation: APPEND_PATH_TO_ADDRESS
+
+  /api/v1/sinch/verify-otp:
+    post:
+      operationId: "OtpController_verifyOtp"
+      summary: "Verify OTP for a phone number"
+      responses:
+        200:
+          $ref: "#/responses/Success"
+      security:
+        - IDP_JWT_AUTH: []
+        - GCLOUD_TOKEN_AUTH: []
+      x-google-backend:
+        address: "https://notification-management-service-dev-931474023414.us-central1.run.app"
+        path_translation: APPEND_PATH_TO_ADDRESS
+
+  /api/v1/notification:
+    post:
+      operationId: "notification_post_controller"
+      responses:
+        200:
+          $ref: "#/responses/Success"
+      security: []
+      x-google-backend:
+        address: "https://notification-management-service-dev-931474023414.us-central1.run.app"
+        path_translation: APPEND_PATH_TO_ADDRESS
+  #.............................................................document processor service.............................
+  /document-processor/api-docs/{extra_path}:
+    get:
+      operationId: "document-processor_api_docs_extra_get"
+      parameters:
+        - name: "extra_path"
+          in: "path"
+          required: true
+          type: "string"
+      responses:
+        200:
+          $ref: "#/responses/Success"
+      security: []
+      x-google-backend:
+        address: "https://document-processor-dev-931474023414.us-central1.run.app"
+        path_translation: APPEND_PATH_TO_ADDRESS
+
+  /document-processor/api-docs:
+    get:
+      operationId: "document-processor_api_docs_get"
+      responses:
+        200:
+          $ref: "#/responses/Success"
+      security: []
+      x-google-backend:
+        address: "https://document-processor-dev-931474023414.us-central1.run.app"
+        path_translation: APPEND_PATH_TO_ADDRESS
+
+  /api/v1/document/thumbnail:
+    post:
+      operationId: "document-processor_thumbnail_generate"
+      responses:
+        200:
+          $ref: "#/responses/Success"
+      security:
+        - IDP_JWT_AUTH: []
+        - GCLOUD_TOKEN_AUTH: []
+        - DOCUMENT_VALIDATOR_FUNCTION_TOKEN_AUTH: []
+      x-google-backend:
+        address: "https://document-processor-dev-931474023414.us-central1.run.app"
+        path_translation: APPEND_PATH_TO_ADDRESS
